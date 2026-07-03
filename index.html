@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宣傳推介文書 - 建構宣傳內容</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f7f6; 
+            --doc-bg: #ffffff;
+            --text-main: #3d4852;
+            
+            --candy-pink: #ffb5a7;
+            --candy-peach: #fcd5ce;
+            --candy-yellow: #fdf0d5;
+            --candy-mint: #d8e2dc;
+            --candy-blue: #a3c4f3;
+            --candy-purple: #c8b6ff;
+
+            --strong-blue: #0984e3;
+            --strong-orange: #e17055;
+            --strong-green: #00b894;
+            --strong-pink: #ff7675;
+            --strong-purple: #6c5ce7;
+            --strong-yellow: #fdcb6e;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "Heiti TC", sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#d1d8e0 2px, transparent 2px);
+            background-size: 30px 30px;
+            margin: 0; padding: 0; color: var(--text-main); line-height: 1.7;
+        }
+
+        /* 頂部導航列 */
+        .top-nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
+            padding: 12px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            z-index: 1000; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+            border-bottom: 3px dashed var(--candy-pink); box-sizing: border-box;
+        }
+        .nav-btn {
+            background: #ffffff; color: #6b7a8f; border: 2px solid var(--border-color);
+            padding: 6px 15px; border-radius: 25px; font-size: 0.95rem; font-weight: 900;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .nav-btn:hover { background: var(--candy-yellow); border-color: #f6e58d; transform: scale(1.05) rotate(-1deg); color: #3d4852; }
+        .nav-btn.active { background: var(--candy-pink); border-color: var(--candy-pink); color: white; transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 181, 167, 0.5); }
+
+        /* 左下角懸浮下載工具列 */
+        .floating-actions { position: fixed; bottom: 15px; left: 15px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+        .action-btn { padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 900; cursor: pointer; border: none; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: all 0.3s; display: flex; align-items: center; gap: 8px; opacity: 0.9; }
+        .action-btn.pdf-btn { background: var(--strong-blue); color: white; }
+        .action-btn.word-btn { background: #2b579a; color: white; }
+        .action-btn.img-btn { background: #00b894; color: white; }
+        .action-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 6px 15px rgba(0,0,0,0.2); opacity: 1; }
+
+        /* 文件容器與頁面切換 */
+        .document-container { max-width: 1050px; margin: 80px auto 30px; background: var(--doc-bg); border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); padding: 40px 50px; min-height: 800px; position: relative; }
+        .page { display: none; animation: bounceIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .page.active { display: block; }
+        @keyframes bounceIn { 0% { opacity: 0; transform: translateY(30px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* 標題樣式 */
+        .title-wrapper { display: flex; align-items: center; justify-content: flex-start; gap: 20px; margin-bottom: 25px; }
+        .num-bubble { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+        .num-bubble .bg-blob { position: absolute; width: 100%; height: 100%; background: var(--candy-purple); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; animation: morph 3s ease-in-out infinite; }
+        .num-bubble .num { position: absolute; font-size: 30px; font-weight: 900; color: #fff; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;}
+        .main-title { font-size: 2rem; color: #2d3436; margin: 0; letter-spacing: 2px; font-weight: 900; }
+        @keyframes morph { 0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; } 50% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; } }
+        
+        .sub-heading-blue { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 30px;}
+        .sub-heading-blue span { background: var(--strong-blue); color: #fff; padding: 5px 20px; border-radius: 30px; font-weight: 900; font-size: 1.2rem; box-shadow: 2px 2px 0px var(--candy-blue);}
+        .sub-heading-blue h3 { margin: 0; font-size: 1.5rem; color: #2d3436; font-weight: 900; }
+
+        /* 遊戲互動區塊與計分 */
+        .game-section { background: #fff; border: 3px dashed #cbd5e0; border-radius: 20px; padding: 25px; margin-bottom: 35px; box-shadow: inset 0 0 15px rgba(0,0,0,0.02); }
+        .instruction { font-weight: bold; font-size: 1.05em; color: #2d3436; background: #fdfdfd; padding: 15px 20px; border-radius: 12px; border-left: 8px solid var(--candy-pink); margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 8px; }
+        .instruction-header { display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 10px;}
+        .score-display { display: inline-flex; align-items: center; padding: 5px 15px; background: #ffffff; border: 3px dashed; border-radius: 25px; font-weight: 900; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.04); margin-left: auto; }
+        .reset-btn { padding: 8px 20px; border-radius: 50px; font-size: 1rem; font-weight: 900; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 6px; border: 2px solid; margin-top: 20px;}
+        .reset-btn:hover { transform: translateY(-2px) scale(1.05); }
+
+        /* 流程圖 (步驟及實踐) */
+        .flow-container { display: flex; flex-direction: column; gap: 15px; margin: 30px 0; background: #f8fafc; padding: 25px; border-radius: 20px; border: 2px dashed #cbd5e0;}
+        .flow-row { display: flex; align-items: stretch; background: #fff; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; border: 2px solid #e2e8f0; transition: 0.3s;}
+        .flow-row:hover { transform: translateX(5px); border-color: var(--candy-blue);}
+        .flow-title { flex: 0 0 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: 900; font-size: 1.2rem; color: white; padding: 15px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .flow-content { flex: 1; padding: 15px 25px; display: flex; flex-direction: column; justify-content: center;}
+        .flow-list { margin: 0; padding-left: 20px; color: #4a5568; font-weight: bold; line-height: 1.8; }
+        .flow-list li::marker { color: var(--strong-orange); }
+
+        /* 教學點特效 */
+        @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(9, 132, 227, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(9, 132, 227, 0); } 100% { box-shadow: 0 0 0 0 rgba(9, 132, 227, 0); } }
+        .guide-dot { position: absolute; left: -15px; top: -5px; width: 14px; height: 14px; background-color: #0984e3; border-radius: 50%; cursor: pointer; animation: pulse-blue 2s infinite; transition: transform 0.2s; z-index: 10;}
+        .guide-dot:hover { transform: scale(1.2); animation: none; }
+        .ans-blue { display: none; color: #0984e3; font-weight: 900; margin-top: 10px; font-size: 0.9rem; line-height: 1.5; border-left: 3px solid #0984e3; padding-left: 8px;}
+
+        /* 配對選項 (Chips) - 用於 2.1.1 */
+        .q-options-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; background: #fdfdfd; padding: 20px; border-radius: 12px; border: 2px solid #e2e8f0; }
+        .mc-chip { background: #fff; border: 2px solid var(--candy-blue); color: #0984e3; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: 900; transition: all 0.2s; box-shadow: 0 3px 5px rgba(0,0,0,0.05); font-size: 0.9rem; user-select: none;}
+        .mc-chip:hover { background: var(--candy-blue); color: #fff; transform: translateY(-2px); }
+        .mc-chip.selected { background: var(--strong-blue); color: #fff; border-color: var(--strong-blue); box-shadow: 0 4px 10px rgba(9, 132, 227, 0.3); transform: scale(1.05); }
+        .mc-chip.used { display: none; } 
+        .mc-chip.wrong { background: #ffeaea; border-color: #ff7675; color: #ff7675; animation: shakeTF 0.4s; }
+        
+        /* 看廣告按鈕 */
+        .watch-ad-btn { margin-top: 10px; background: #fff; border: 2px solid var(--strong-orange); color: var(--strong-orange); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; }
+        .watch-ad-btn:hover { background: var(--strong-orange); color: #fff; transform: scale(1.05); box-shadow: 0 3px 8px rgba(225, 112, 85, 0.3); }
+
+        /* 黃金互動填空框 */
+        @keyframes border-glow {
+            0% { border-color: #fdcb6e; box-shadow: 0 0 5px rgba(253, 203, 110, 0.4); }
+            50% { border-color: #e17055; box-shadow: 0 0 12px rgba(225, 112, 85, 0.6); }
+            100% { border-color: #fdcb6e; box-shadow: 0 0 5px rgba(253, 203, 110, 0.4); }
+        }
+        .match-blank { 
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 120px; min-height: 32px; padding: 4px 10px; 
+            background-color: #fff9db; color: #e17055; font-weight: 900; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.3s; border: 3px solid #fdcb6e; 
+            border-radius: 8px; box-shadow: 0 3px 5px rgba(0,0,0,0.05);
+            animation: border-glow 2s infinite ease-in-out; vertical-align: middle;
+            box-sizing: border-box; text-align: center; word-break: break-word;
+        }
+        .match-blank:hover { background-color: #fff3b0; transform: scale(1.03); }
+        .match-blank.correct { 
+            border-color: #00b894; color: #00b894; background-color: #e6fff8; 
+            animation: none; box-shadow: inset 0 2px 4px rgba(0,184,148,0.1); font-size: 0.95rem;
+        }
+        @keyframes shakeTF { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-2deg); } 75% { transform: translateX(5px) rotate(2deg); } }
+
+        /* ================== 2.1.2 互動式下拉選單設計 ================== */
+        .p4-select {
+            padding: 8px 12px; border-radius: 8px; border: 2px dashed #a0aec0;
+            font-family: inherit; font-size: 0.95rem; color: #3d4852; font-weight: bold;
+            outline: none; width: 100%; cursor: pointer; appearance: none;
+            background: #fff url("data:image/svg+xml;utf8,<svg fill='%23a0aec0' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right 10px center/18px;
+            transition: 0.3s;
+        }
+        .p4-select:focus { border-color: var(--candy-peach); background-color: #fffcfb; }
+        .p4-select.correct { border-color: #00b894; border-style: solid; background-color: #e6fff8; color: #00b894; pointer-events: none; }
+        .p4-select.wrong { border-color: #ff7675; border-style: solid; background-color: #ffeaea; color: #ff7675; animation: shakeTF 0.4s; }
+        .p4-group { position: relative; margin-bottom: 15px; }
+        .p4-label { display: block; font-weight: 900; color: #4a5568; margin-bottom: 5px; font-size: 0.95rem; }
+        
+        .p4-err-icon { 
+            position: absolute; right: -25px; top: 35px; 
+            color: #ff7675; font-size: 1.3rem; cursor: pointer; display: none; 
+            transition: 0.3s;
+        }
+        .p4-err-icon:hover { transform: scale(1.2); }
+        .plus-two-anim { 
+            position: absolute; left: 50%; top: -10px; color: #00b894; font-weight: 900; 
+            font-size: 1.4rem; animation: floatUp 1.2s forwards; pointer-events: none; opacity: 0; z-index: 10;
+        }
+        @keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -35px); } }
+
+        /* ================== 2.2 策略與應用 ================== */
+        .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 30px;}
+        .strategy-card { display: flex; align-items: center; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow: hidden; border: 2px solid #edf2f7; transition: 0.3s;}
+        .strategy-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .strategy-icon { flex: 0 0 80px; height: 100%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2rem; }
+        .strategy-text { padding: 15px; flex: 1; }
+        .strategy-text strong { display: block; font-size: 1.1rem; margin-bottom: 5px; color: #2d3436; }
+        .strategy-text p { margin: 0; font-size: 0.85rem; color: #4a5568; line-height: 1.5; font-weight: bold;}
+
+        /* 文章互動標示 (2.2) 螢光筆效果 & 行間標籤 */
+        .article-box { background: #fcfaf2; border: 1px solid #dcdde1; padding: 25px 35px; border-radius: 10px; font-family: "MingLiU", serif; color: #2f3640; font-size: 1.05rem; box-shadow: inset 0 0 20px rgba(0,0,0,0.02); margin-bottom: 25px; line-height: 2.8; }
+        .sentence-hl { position: relative; cursor: pointer; transition: 0.3s; border-radius: 5px; padding: 2px 4px; display: inline; border-bottom: 2px dotted #a0aec0;}
+        .sentence-hl:hover, .sentence-hl.active { background-color: var(--candy-yellow); color: #d63031; border-bottom-style: solid; }
+        .hl-part { position: relative; transition: all 0.4s ease; border-radius: 4px; padding: 0 2px; }
+        
+        /* 策略小字標籤 (半透明螢光色，不擋字) */
+        .strategy-tag {
+            display: none; 
+            position: absolute;
+            top: -1.7em; 
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 900;
+            white-space: nowrap;
+            border: 1px solid transparent;
+            z-index: 5;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .strategy-tag.show { display: block; }
+        @keyframes popIn { 0% { transform: translate(-50%, 10px) scale(0); opacity: 0; } 100% { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+
+        /* 句子對應的答題卡片 (2.2) */
+        .q-card-container { display: flex; flex-direction: column; gap: 15px; }
+        .q-card { background: #fff; border: 2px dashed #cbd5e0; border-radius: 15px; padding: 20px; transition: 0.4s; box-shadow: 0 4px 8px rgba(0,0,0,0.03); scroll-margin-top: 100px; }
+        .q-card.highlight-pulse { animation: cardPulse 1.5s; border-color: var(--strong-orange); box-shadow: 0 0 15px rgba(225, 112, 85, 0.4); }
+        @keyframes cardPulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .q-card-header { font-weight: 900; color: var(--strong-orange); font-size: 1.1rem; margin-bottom: 10px; border-bottom: 2px solid #edf2f7; padding-bottom: 8px;}
+        .q-card-text { font-weight: bold; color: #4a5568; font-size: 0.95rem; margin-bottom: 15px; line-height: 1.6; background: #fdfdfd; padding: 10px; border-radius: 8px; border-left: 4px solid var(--candy-peach);}
+        
+        /* 練習五專屬的細小 Grid 排版 */
+        #game-p4 .q-card .mc-chip {
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            border-width: 1px;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 8px;
+        }
+        #game-p4 .q-card .q-options-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 5px 0;
+            background: transparent;
+            border: none;
+        }
+
+        /* 全螢幕彈出提示/影片框 */
+        .error-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 52, 54, 0.8); z-index: 2000; backdrop-filter: blur(5px); justify-content: center; align-items: center; }
+        .error-modal-box { background: #fff; border-radius: 15px; padding: 25px 30px; max-width: 450px; width: 90%; position: relative; text-align: left; border-top: 8px solid #ff7675; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: bounceIn 0.3s; }
+        
+        .video-modal-box { background: #fff; border-radius: 15px; padding: 25px; max-width: 650px; width: 95%; position: relative; text-align: center; border-top: 8px solid var(--strong-orange); box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: bounceIn 0.3s; }
+
+        .error-close-btn { position: absolute; top: 12px; right: 15px; background: #f1f2f6; border: none; color: #747d8c; font-size: 1.1rem; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; transition: 0.3s; z-index: 10; }
+        .error-close-btn:hover { background: #ff7675; color: white; transform: rotate(90deg); }
+
+        @media (max-width: 850px) {
+            .document-container { padding: 30px 20px; margin-top: 100px; }
+            .strategy-grid { grid-template-columns: 1fr; }
+            .instruction-header { flex-direction: column; align-items: flex-start; }
+            .score-display { margin-left: 0; }
+            .flow-row { flex-direction: column; }
+            .flow-title { flex: none; padding: 10px; }
+            .article-box { padding: 15px; line-height: 2.6; }
+            #game-p4 .q-card .q-options-container { grid-template-columns: repeat(2, 1fr); }
+            .p4-err-icon { right: -18px; top: 38px; font-size: 1.1rem; }
+        }
+
+        /* PDF 列印設定 */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .top-nav, .floating-actions, .reset-btn, .hint-dot, .guide-dot, .q-options-container, .error-modal-overlay, .watch-ad-btn { display: none !important; }
+            .ans-red, .ans-blue { display: inline-block !important; }
+            .match-blank { border: none; color: #3d4852; background: transparent; box-shadow: none; animation: none; padding: 0; }
+            .strategy-tag { display: inline-block !important; position: static !important; transform: none !important; margin-left: 4px !important; } 
+            @page { margin: 10mm; }
+            body { background: #fff !important; }
+            .document-container { margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; max-width: 100% !important; }
+            .page { display: none !important; }
+            .page.active { display: block !important; opacity: 1 !important; transform: none !important; animation: none !important;}
+            .q-card { break-inside: avoid; border: 1px solid #cbd5e0 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部導航列 -->
+    <div class="top-nav">
+        <button class="nav-btn active" onclick="switchPage(1)">2 建構宣傳內容</button>
+        <button class="nav-btn" onclick="switchPage(2)">2.1.1 鎖定目標顧客</button>
+        <button class="nav-btn" onclick="switchPage(3)">2.1.2 展示產品優點</button>
+        <button class="nav-btn" onclick="switchPage(4)">2.2 策略及應用</button>
+    </div>
+
+    <!-- 匯出工具列 -->
+    <div class="floating-actions">
+        <button class="action-btn pdf-btn" onclick="window.print()"><i class="fa-solid fa-file-pdf"></i> 儲存本頁 (PDF)</button>
+        <button class="action-btn word-btn" onclick="exportHTMLToWord()"><i class="fa-solid fa-file-word"></i> 儲存本頁 (Word)</button>
+        <button class="action-btn img-btn" onclick="exportToImage(this)"><i class="fa-solid fa-image"></i> 儲存本頁 (圖片)</button>
+    </div>
+
+    <div id="exportContent" class="document-container">
+        
+        <!-- ================= PAGE 1: 2.1 步驟及實踐 ================= -->
+        <div id="page1" class="page active">
+            <div class="title-wrapper">
+                <div class="num-bubble">
+                    <div class="bg-blob" style="background: var(--strong-pink);"></div>
+                    <div class="num">2</div>
+                </div>
+                <h1 class="main-title">建構宣傳內容</h1>
+            </div>
+
+            <p style="font-weight: bold; color: #4a5568; line-height: 1.8;">
+                宣傳內容可通過不同形式展示，除了文字本身，還有聲音或影像。成功的宣傳可以廣泛流傳並被接納，因此內容精彩、文辭吸引才能有效達到目的。
+            </p>
+
+            <div class="sub-heading-blue">
+                <span>2.1</span>
+                <h3>步驟及實踐</h3>
+            </div>
+            
+            <p style="font-weight: bold; color: #4a5568; line-height: 1.8;">
+                要通過宣傳達到銷售目的或建立品牌形象，就需要讓目標顧客認識該機構、產品或服務與自己的關係，從認識到認同，繼而轉化為需要，最後促成行動。在構思宣傳內容時，可參考下面幾個步驟，提升效果，吸引目標對象。
+            </p>
+
+            <!-- 流程圖 -->
+            <div class="flow-container">
+                <div class="flow-row">
+                    <div class="flow-title" style="background: var(--candy-yellow); color: #e17055;">知己知彼</div>
+                    <div class="flow-content">
+                        <ul class="flow-list">
+                            <li>了解產品特色</li>
+                            <li>鎖定目標顧客</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-title" style="background: var(--candy-purple);">展示精萃</div>
+                    <div class="flow-content">
+                        <ul class="flow-list">
+                            <li>展示產品 / 服務的優勢</li>
+                            <li>強調用家得到的好處</li>
+                            <li>引用權威增加說服力</li>
+                            <li>善用修辭提升吸引力</li>
+                            <li>有系統地鋪排內容</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-title" style="background: var(--candy-yellow); color: #e17055;">提升效果</div>
+                    <div class="flow-content">
+                        <ul class="flow-list">
+                            <li>配合美觀的排版</li>
+                            <li>根據不同媒體的特點配上圖片及影音素材</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2: 2.1.1 鎖定目標顧客 ================= -->
+        <div id="page2" class="page">
+            <div class="sub-heading-blue">
+                <span>2.1.1</span>
+                <h3>鎖定目標顧客</h3>
+            </div>
+
+            <div class="game-section" id="game-p2" style="border-color: var(--candy-blue);">
+                <div class="instruction" style="border-color: var(--candy-blue); background: #f4f9ff;">
+                    <div class="instruction-header" style="position: relative;">
+                        <span class="guide-dot" style="left: -15px; top: -5px;" onclick="toggleDisplay('guide-2-1-1')"></span>
+                        <span><i class="fa-solid fa-puzzle-piece" style="color: var(--strong-blue);"></i> 練習三：趣味連線配對</span>
+                        <div class="score-display" style="border-color: var(--candy-blue); color: var(--strong-blue);">本題得分：<span id="score-p2">0</span> 分</div>
+                    </div>
+                    
+                    <div id="guide-2-1-1" class="ans-blue" style="margin-top: 10px; background: #e0f2fe; padding: 12px 15px; border-radius: 8px; border: none; font-size: 0.85rem;">
+                        <i class="fa-solid fa-lightbulb" style="color:var(--strong-blue);"></i> <strong>教師建議：</strong>教師可播放相關的廣告影片給學生看，並透過活動讓學生了解，成功的宣傳必須具備能針對目標顧客需要的鮮明賣點。學生可以選取多項答案，合理即可。
+                    </div>
+
+                    <span style="font-weight: normal; font-size: 0.9em; color: #636e72; line-height: 1.7; margin-top: 5px;">
+                        請為下面的產品配對「賣點」和「目標顧客」。<br>
+                        <strong>玩法：</strong>先點選上方框內的選項，再點擊下方卡片中的<strong style="color:#e17055;">黃色閃爍格子</strong>填寫。<strong style="color:#00b894;">（選對得 2 分，選錯扣 1 分。點擊已對格子可撤銷）</strong><br>
+                        💡 提示：「賣點」填對後選項會消失喔，請謹慎配對！
+                    </span>
+                </div>
+
+                <!-- 賣點與目標顧客 選項庫 -->
+                <div style="font-weight: bold; color: #4a5568; margin-bottom: 5px; text-align: center;">👇 點擊選擇你要填入的選項 👇</div>
+                <div class="q-options-container" id="bank-p2">
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; width: 100%; border-bottom: 1px dashed #cbd5e0; padding-bottom: 10px;">
+                        <span style="font-weight: 900; color: var(--strong-blue); background: #e0f2fe; padding: 4px 12px; border-radius: 8px; margin-right: 5px;"><i class="fa-solid fa-star"></i> 賣點：</span>
+                        <button class="mc-chip" data-type="feature" data-text="優質堅韌 / 時刻保護你" onclick="selectChip(this)">優質堅韌 / 時刻保護你</button>
+                        <button class="mc-chip" data-type="feature" data-text="營養豐富 / 時刻支持在身邊" onclick="selectChip(this)">營養豐富 / 時刻支持在身邊</button>
+                        <button class="mc-chip" data-type="feature" data-text="促進腸道健康 / 增強身體抵抗力" onclick="selectChip(this)">促進腸道健康 / 增強身體抵抗力</button>
+                        <button class="mc-chip" data-type="feature" data-text="髮色瞬間變黑" onclick="selectChip(this)">髮色瞬間變黑</button>
+                        <button class="mc-chip" data-type="feature" data-text="香甜酥脆 / 擰開歡聚時刻" onclick="selectChip(this)">香甜酥脆 / 擰開歡聚時刻</button>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; width: 100%; padding-top: 5px;">
+                        <span style="font-weight: 900; color: var(--strong-green); background: #e6fff8; padding: 4px 12px; border-radius: 8px; margin-right: 5px;"><i class="fa-solid fa-users"></i> 目標顧客：</span>
+                        <button class="mc-chip" data-type="target" data-text="年輕女性" style="border-color:#00b894; color:#00b894;" onclick="selectChip(this)">年輕女性</button>
+                        <button class="mc-chip" data-type="target" data-text="受白髮困擾的人" style="border-color:#00b894; color:#00b894;" onclick="selectChip(this)">受白髮困擾的人</button>
+                        <button class="mc-chip" data-type="target" data-text="年輕人" style="border-color:#00b894; color:#00b894;" onclick="selectChip(this)">年輕人</button>
+                        <button class="mc-chip" data-type="target" data-text="兒童" style="border-color:#00b894; color:#00b894;" onclick="selectChip(this)">兒童</button>
+                        <button class="mc-chip" data-type="target" data-text="注重健康的人" style="border-color:#00b894; color:#00b894;" onclick="selectChip(this)">注重健康的人</button>
+                    </div>
+                </div>
+
+                <!-- 產品配對卡片區 (加入看廣告按鈕) -->
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <!-- 卡片 1 -->
+                    <div style="background: #fff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div style="flex: 0 0 160px; color: #2d3436; text-align: center; border-right: 2px dashed #cbd5e0; padding-right: 15px; box-sizing: border-box;">
+                            <div style="font-weight: 900; font-size: 1.15rem;">美源髮彩</div>
+                            <button class="watch-ad-btn" onclick="openVideoModal('V1.mp4')"><i class="fa-solid fa-play"></i> 看廣告</button>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: var(--candy-blue); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">賣點</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['髮色瞬間變黑'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: var(--strong-green); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">目標顧客</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['受白髮困擾的人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片 2 -->
+                    <div style="background: #fff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div style="flex: 0 0 160px; color: #2d3436; text-align: center; border-right: 2px dashed #cbd5e0; padding-right: 15px; box-sizing: border-box;">
+                            <div style="font-weight: 900; font-size: 1.15rem;">奧利奧餅乾<br>Oreo</div>
+                            <button class="watch-ad-btn" onclick="openVideoModal('V2.mp4')"><i class="fa-solid fa-play"></i> 看廣告</button>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: var(--candy-blue); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">賣點</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['香甜酥脆 / 擰開歡聚時刻'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: var(--strong-green); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">目標顧客</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['兒童', '年輕人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['兒童', '年輕人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片 3 -->
+                    <div style="background: #fff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div style="flex: 0 0 160px; color: #2d3436; text-align: center; border-right: 2px dashed #cbd5e0; padding-right: 15px; box-sizing: border-box;">
+                            <div style="font-weight: 900; font-size: 1.15rem;">得寶紙巾<br>Tempo</div>
+                            <button class="watch-ad-btn" onclick="openVideoModal('V3.mp4')"><i class="fa-solid fa-play"></i> 看廣告</button>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: var(--candy-blue); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">賣點</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['優質堅韌 / 時刻保護你'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: var(--strong-green); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">目標顧客</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['年輕女性', '年輕人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['年輕女性', '年輕人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片 4 -->
+                    <div style="background: #fff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div style="flex: 0 0 160px; color: #2d3436; text-align: center; border-right: 2px dashed #cbd5e0; padding-right: 15px; box-sizing: border-box;">
+                            <div style="font-weight: 900; font-size: 1.15rem;">維他豆奶</div>
+                            <button class="watch-ad-btn" onclick="openVideoModal('V4.mp4')"><i class="fa-solid fa-play"></i> 看廣告</button>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: var(--candy-blue); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">賣點</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['營養豐富 / 時刻支持在身邊'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: var(--strong-green); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">目標顧客</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['年輕人', '兒童', '注重健康的人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['年輕人', '兒童', '注重健康的人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 卡片 5 -->
+                    <div style="background: #fff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div style="flex: 0 0 160px; color: #2d3436; text-align: center; border-right: 2px dashed #cbd5e0; padding-right: 15px; box-sizing: border-box;">
+                            <div style="font-weight: 900; font-size: 1.15rem;">益力多活性<br>乳酸保健飲品</div>
+                            <button class="watch-ad-btn" onclick="openVideoModal('V5.mp4')"><i class="fa-solid fa-play"></i> 看廣告</button>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="background: var(--candy-blue); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">賣點</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['促進腸道健康 / 增強身體抵抗力'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: var(--strong-green); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: bold;">目標顧客</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['兒童', '注重健康的人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                                <span class="match-blank" onclick="fillMultiBlank(this, ['兒童', '注重健康的人'], 'p2')"><i class="fa-solid fa-hand-pointer"></i> 點擊填入</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="reset-btn" onclick="resetMultiGame('p2')" style="background: var(--strong-blue); border-color:var(--strong-blue); color:white;">
+                        <i class="fa-solid fa-rotate-right"></i> 重新挑戰 (清除本題作答)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3: 2.1.2 展示產品優點 ================= -->
+        <div id="page3" class="page">
+            <div class="sub-heading-blue">
+                <span>2.1.2</span>
+                <h3>展示產品的優點</h3>
+            </div>
+            
+            <p style="font-weight: bold; color: #4a5568;">請說出下面的廣告強調了產品的哪些優點？這些優點能吸引哪些顧客？</p>
+
+            <div style="font-weight: 900; font-size: 1.2rem; color: #2d3436; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px;">雜誌廣告</div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; background: #fff; border-radius: 15px; border: 2px solid var(--candy-yellow); padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+                <!-- 圖片 l1p19.jpg -->
+                <div style="flex: 0 0 280px;">
+                    <img src="l1p19.jpg" alt="麵包店廣告" style="width: 100%; border-radius: 10px; object-fit: cover;">
+                </div>
+                <div style="flex: 1; font-weight: bold; color: #4a5568; line-height: 1.8; text-indent: 2em; display: flex; align-items: center;">
+                    九龍城一家新開的麵包店，店舖雖小，但人氣不絕。主打麵包無添加、無防腐劑，並選用日本麵粉，每天新鮮製造。當中的經典法式麵包，不含糖、雞蛋和牛油，不但吃得健康，而且加入研磨小麥粉，讓麵包富濃郁小麥香，容易消化。另一款必吃的超軟方包，加入天然蜜糖、奶油和湯種製成，鬆軟香甜。
+                </div>
+            </div>
+
+            <div class="game-section" id="game-p3" style="border-color: var(--candy-peach); position: relative;">
+                <div class="instruction" style="border-color: var(--candy-peach); background: #fffcfb;">
+                    <div class="instruction-header">
+                        <span><i class="fa-solid fa-pen-to-square" style="color: var(--strong-orange);"></i> 練習四：產品優點與目標客群分析（動態下拉批改）</span>
+                        <div class="score-display" style="border-color: var(--candy-peach); color: var(--strong-orange);">本題得分：<span id="score-p3">0</span> 分</div>
+                    </div>
+                    <span style="font-weight: normal; font-size: 0.9em; color: #636e72; line-height: 1.7; margin-top: 5px;">
+                        請根據上方文章內容，推斷出兩款麵包所對應的「產品優點」與最合適的「目標客群」特徵。<br>
+                        <strong>玩法：</strong>請在各個下拉選單中直接選擇合理答案。<br>
+                        🎯 <strong style="color:#00b894;">選對：</strong>會立刻飄出 <span style="font-weight:900;">+2</span> 分特效並鎖定綠框！<br>
+                        ❌ <strong style="color:#e17055;">選錯：</strong>立即扣 1 分，旁邊會出現紅色 <i class="fa-solid fa-circle-xmark"></i>，點擊它可查看引導回饋，你可以重新思考並再次選擇。
+                    </span>
+                </div>
+
+                <!-- 雙卡片佈局 -->
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    
+                    <!-- 卡片 1: 經典法式麵包 -->
+                    <div style="flex: 1; min-width: 300px; background: #fffdf5; border: 2px solid var(--candy-yellow); border-radius: 12px; padding: 25px;">
+                        <h4 style="color: #e67e22; margin-top: 0; font-size: 1.2rem; border-bottom: 2px dashed #f1c40f; padding-bottom: 8px;"><i class="fa-solid fa-bread-slice"></i> 客群 A（經典法式麵包）</h4>
+                        
+                        <div class="p4-group">
+                            <span class="p4-label">產品優點 1：</span>
+                            <select id="p4-1-adv1" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇優點--</option>
+                                <!-- 正確：無糖無油，容易消化 -->
+                                <option value="添加多種防腐劑，保質期長">添加多種防腐劑，保質期長</option>
+                                <option value="蜜糖奶油製成，鬆軟香甜">蜜糖奶油製成，鬆軟香甜</option>
+                                <option value="無糖無油，容易消化">無糖無油，容易消化</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-1-adv1-err" onclick="showP4Error('p4-1-adv1')"></i>
+                        </div>
+
+                        <div class="p4-group">
+                            <span class="p4-label">產品優點 2：</span>
+                            <select id="p4-1-adv2" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇優點--</option>
+                                <!-- 正確：富濃郁小麥香，吃得健康 -->
+                                <option value="包裝精美，適合送禮">包裝精美，適合送禮</option>
+                                <option value="富濃郁小麥香，吃得健康">富濃郁小麥香，吃得健康</option>
+                                <option value="價格低廉，份量巨大">價格低廉，份量巨大</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-1-adv2-err" onclick="showP4Error('p4-1-adv2')"></i>
+                        </div>
+
+                        <div class="p4-group">
+                            <span class="p4-label">目標顧客：</span>
+                            <select id="p4-1-target" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇目標顧客--</option>
+                                <!-- 正確：注重健康的養生族 / 退休長者 -->
+                                <option value="需要快速補充大量糖分的運動員">需要快速補充大量糖分的運動員</option>
+                                <option value="偏好重油重糖口味的人">偏好重油重糖口味的人</option>
+                                <option value="注重健康的養生族 / 退休長者">注重健康的養生族 / 退休長者</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-1-target-err" onclick="showP4Error('p4-1-target')"></i>
+                        </div>
+
+                        <div class="p4-group">
+                            <span class="p4-label">顧客喜好/需求：</span>
+                            <select id="p4-1-need" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇喜好/需求--</option>
+                                <!-- 正確：注重健康，追求無糖易消化食品 -->
+                                <option value="追求極致鬆軟與濃郁奶香">追求極致鬆軟與濃郁奶香</option>
+                                <option value="注重健康，追求無糖易消化食品">注重健康，追求無糖易消化食品</option>
+                                <option value="喜歡價格極低、飽足感強的粗糧">喜歡價格極低、飽足感強的粗糧</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-1-need-err" onclick="showP4Error('p4-1-need')"></i>
+                        </div>
+                    </div>
+
+                    <!-- 卡片 2: 超軟方包 -->
+                    <div style="flex: 1; min-width: 300px; background: #f4f9ff; border: 2px solid var(--candy-blue); border-radius: 12px; padding: 25px;">
+                        <h4 style="color: var(--strong-blue); margin-top: 0; font-size: 1.2rem; border-bottom: 2px dashed #a3c4f3; padding-bottom: 8px;"><i class="fa-solid fa-cake-candles"></i> 客群 B（超軟方包）</h4>
+                        
+                        <div class="p4-group">
+                            <span class="p4-label">產品優點 1：</span>
+                            <select id="p4-2-adv1" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇優點--</option>
+                                <!-- 正確：蜜糖奶油製成，鬆軟香甜 -->
+                                <option value="無糖無油，容易消化">無糖無油，容易消化</option>
+                                <option value="蜜糖奶油製成，鬆軟香甜">蜜糖奶油製成，鬆軟香甜</option>
+                                <option value="價格低廉，份量巨大">價格低廉，份量巨大</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-2-adv1-err" onclick="showP4Error('p4-2-adv1')"></i>
+                        </div>
+
+                        <div class="p4-group">
+                            <span class="p4-label">產品優點 2：</span>
+                            <select id="p4-2-adv2" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇優點--</option>
+                                <!-- 正確：湯種製法，口感軟嫩 -->
+                                <option value="富濃郁小麥香，吃得健康">富濃郁小麥香，吃得健康</option>
+                                <option value="湯種製法，口感軟嫩">湯種製法，口感軟嫩</option>
+                                <option value="包裝精美，適合送禮">包裝精美，適合送禮</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-2-adv2-err" onclick="showP4Error('p4-2-adv2')"></i>
+                        </div>
+
+                        <div class="p4-group">
+                            <span class="p4-label">目標顧客：</span>
+                            <select id="p4-2-target" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇目標顧客--</option>
+                                <!-- 正確：喜愛甜食與軟嫩口感的大眾 (如兒童/學生/上班族) -->
+                                <option value="嚴格控制糖分攝取的人士">嚴格控制糖分攝取的人士</option>
+                                <option value="追求純天然無糖無油的養生族">追求純天然無糖無油的養生族</option>
+                                <option value="喜愛甜食與軟嫩口感的大眾 (如兒童/學生/上班族)">喜愛甜食與軟嫩口感的大眾 (如兒童/學生/上班族)</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-2-target-err" onclick="showP4Error('p4-2-target')"></i>
+                        </div>
+
+                        <div class="p4-group">
+                            <span class="p4-label">顧客喜好/需求：</span>
+                            <select id="p4-2-need" class="p4-select" onchange="checkP4Select(this)">
+                                <option value="">--請選擇喜好/需求--</option>
+                                <!-- 正確：喜愛甜食，追求軟嫩口感 -->
+                                <option value="需要高纖維、低熱量的代餐">需要高纖維、低熱量的代餐</option>
+                                <option value="喜愛甜食，追求軟嫩口感">喜愛甜食，追求軟嫩口感</option>
+                                <option value="注重健康，要求完全無添加糖分">注重健康，要求完全無添加糖分</option>
+                            </select>
+                            <i class="fa-solid fa-circle-xmark p4-err-icon" id="p4-2-need-err" onclick="showP4Error('p4-2-need')"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="reset-btn" onclick="resetP4()" style="background: #fff; color: #a0aec0; border-color:#cbd5e0; margin-left: 10px;">
+                        <i class="fa-solid fa-rotate-right"></i> 重新開始本題
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 4: 2.2 策略及應用 ================= -->
+        <div id="page4" class="page">
+            <div class="sub-heading-blue">
+                <span>2.2</span>
+                <h3>策略及應用</h3>
+            </div>
+            
+            <p style="font-weight: bold; color: #4a5568; margin-bottom: 30px;">建構宣傳內容時，需要應用以下策略，才能展示出產品或活動的精粹，提升宣傳效果。</p>
+
+            <!-- A-F 策略列表區塊 -->
+            <div class="strategy-grid">
+                <div class="strategy-card" style="border-color: #f1c40f;">
+                    <div class="strategy-icon" style="background: #f1c40f;"><i class="fa-solid fa-bullseye"></i></div>
+                    <div class="strategy-text">
+                        <strong>A. 目標明確</strong>
+                        <p>不論是宣傳商品還是服務，都要先理解目標對象的想法，針對他們的興趣和愛好編寫內容，才能寫出具吸引力的文章，從而促使目標顧客行動。</p>
+                    </div>
+                </div>
+                <div class="strategy-card" style="border-color: #e67e22;">
+                    <div class="strategy-icon" style="background: #e67e22;"><i class="fa-solid fa-users"></i></div>
+                    <div class="strategy-text">
+                        <strong>B. 展示優勢</strong>
+                        <p>展示機構、產品或服務的過人之處，吸引顧客的注意。</p>
+                    </div>
+                </div>
+                <div class="strategy-card" style="border-color: #2ecc71;">
+                    <div class="strategy-icon" style="background: #2ecc71;"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="strategy-text">
+                        <strong>C. 強調好處</strong>
+                        <p>強調產品或服務為目標對象帶來的好處，才能引起興趣和關注。好處通常有兩個方向，包括能為目標對象實現甚麼「夢想」或「目標」；以及能為他們解決甚麼「問題」或「困難」。</p>
+                    </div>
+                </div>
+                <div class="strategy-card" style="border-color: #1abc9c;">
+                    <div class="strategy-icon" style="background: #1abc9c;"><i class="fa-solid fa-hand-fist"></i></div>
+                    <div class="strategy-text">
+                        <strong>D. 善用權威</strong>
+                        <p>適當引用研究成果、調查數字、權威機構或人士的評論、政府統計數據等證據，提升可信度，為公司 / 機構建立正面的形象。</p>
+                    </div>
+                </div>
+                <div class="strategy-card" style="border-color: #9b59b6;">
+                    <div class="strategy-icon" style="background: #9b59b6;"><i class="fa-solid fa-pen-nib"></i></div>
+                    <div class="strategy-text">
+                        <strong>E. 巧用修辭</strong>
+                        <p>廣義的修辭指用文字表達思想的技巧，例如使用恰當的詞彙和句式；狹義的修辭指修辭手法，包括比喻、擬人、誇張、聯想等，運用不同的修辭手法可加強文稿的吸引力。</p>
+                    </div>
+                </div>
+                <div class="strategy-card" style="border-color: #3498db;">
+                    <div class="strategy-icon" style="background: #3498db;"><i class="fa-solid fa-sitemap"></i></div>
+                    <div class="strategy-text">
+                        <strong>F. 組織得法</strong>
+                        <p>按照宣傳內容的特點，有條理地編排內容，突出宣傳的重點，也有效塑造公司或機構形象。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 練習區域 -->
+            <div class="game-section" id="game-p4" style="border-color: var(--candy-mint);">
+                <div class="instruction" style="border-color: var(--strong-green); background: #f8fbf9;">
+                    <div class="instruction-header">
+                        <span><i class="fa-solid fa-gamepad" style="color: var(--strong-green);"></i> 練習五：文章策略配對遊戲（螢光筆與小標籤）</span>
+                        <div class="score-display" style="border-color: var(--strong-green); color: var(--strong-green);">本題得分：<span id="score-p4">0</span> 分</div>
+                    </div>
+                    <span style="font-weight: normal; font-size: 0.9em; color: #636e72; line-height: 1.7; margin-top: 5px;">
+                        請判斷這篇宣傳推介文書應用了哪些策略。<br>
+                        <strong>玩法：</strong>點擊文章中 <span style="background:var(--candy-yellow); color:#d63031; padding:2px; border-radius:3px;">畫有底線的句子 ① 至 ⑥</span> 會跳轉至答題卡。請勾選對應的策略 A-F。<br>
+                        🎯 <strong style="color:#00b894;">選對得 2 分：</strong>選項會變色打勾，文章中會亮起相同顏色的<strong>螢光筆</strong>，並在行間彈出<strong>半透明策略小標籤</strong>標示出重點！<br>
+                        ❌ <strong style="color:#e17055;">選錯扣 1 分：</strong>選項會變灰且永久失效，並彈出錯誤原因引導分析。
+                    </span>
+                </div>
+
+                <!-- 互動文章區 -->
+                <div class="article-box">
+                    <h2 style="text-align: center; color: #e67e22; margin-top: 0; margin-bottom: 5px; font-size: 1.6rem; letter-spacing: 2px;">翱翔航空推出「酣睡套裝」</h2>
+                    <h3 style="text-align: center; color: #e67e22; margin-top: 0; margin-bottom: 20px; font-size: 1.4rem; letter-spacing: 2px;">讓旅程更為舒適</h3>
+                    
+                    <p style="text-indent: 2em; margin-bottom: 15px;">
+                        <span class="sentence-hl" onclick="focusQuestion(1)">① 翱翔航空推出全新設計的「酣睡套裝」，讓<span class="hl-part" data-hl="1-A">商務艙的乘客<span class="strategy-tag" data-tag="1-A">目標明確</span></span>在空中也能享受到<span class="hl-part" data-hl="1-E">居家般的<span class="strategy-tag" data-tag="1-E">巧用修辭</span></span><span class="hl-part" data-hl="1-C">舒適睡眠<span class="strategy-tag" data-tag="1-C">強調好處</span></span>。</span>
+                        新套裝由世界著名紡織品牌沙樂與翱翔航空合作生產，為乘客提供更健康和優質的睡眠環境。
+                    </p>
+                    
+                    <p style="text-indent: 2em; margin-bottom: 15px;">
+                        <span class="sentence-hl" onclick="focusQuestion(2)">② <span class="hl-part" data-hl="2-B">全新套裝集<span class="hl-part" data-hl="2-E">典雅和舒適<span class="strategy-tag" data-tag="2-E">巧用修辭</span></span>於一身<span class="strategy-tag" data-tag="2-B">展示優勢</span></span>，各種配件的設計確保乘客能在機上<span class="hl-part" data-hl="2-C">放鬆入睡，並擁有愉快和舒適的飛行體驗<span class="strategy-tag" data-tag="2-C">強調好處</span></span>。</span>
+                        「酣睡套裝」的主要配件包括毛毯、睡墊和枕頭。
+                        <span class="sentence-hl" onclick="focusQuestion(3)">③ 毛毯採用<span class="hl-part" data-hl="3-B">雙面設計<span class="strategy-tag" data-tag="3-B">展示優勢</span></span>，<span class="hl-part" data-hl="3-E">質地柔軟<span class="strategy-tag" data-tag="3-E">巧用修辭</span></span>，其透氣設計<span class="hl-part" data-hl="3-C">有助於一年四季維持最理想的溫度<span class="strategy-tag" data-tag="3-C">強調好處</span></span>。</span>
+                        此外，
+                        <span class="sentence-hl" onclick="focusQuestion(4)">④ <span class="hl-part" data-hl="4-B">睡墊具備矯形功能，密實的內部填充物<span class="strategy-tag" data-tag="4-B">展示優勢</span></span>更能讓乘客感到<span class="hl-part" data-hl="4-E">格外舒適和愜意<span class="strategy-tag" data-tag="4-E">巧用修辭</span></span>，<span class="hl-part" data-hl="4-C">有助睡眠<span class="strategy-tag" data-tag="4-C">強調好處</span></span>。產品<span class="hl-part" data-hl="4-D">經過脊椎醫學協會測試，取得認證<span class="strategy-tag" data-tag="4-D">善用權威</span></span>。</span>
+                        而
+                        <span class="sentence-hl" onclick="focusQuestion(5)">⑤ <span class="hl-part" data-hl="5-B">枕頭的設計大小合適、外形典雅<span class="strategy-tag" data-tag="5-B">展示優勢</span></span>，其質感<span class="hl-part" data-hl="5-E">分外舒適<span class="strategy-tag" data-tag="5-E">巧用修辭</span></span>，坐臥均適用。</span>
+                    </p>
+
+                    <p style="text-indent: 2em; margin-bottom: 25px;">
+                        翱翔航空餐飲與機艙高級副總裁柯洋表示，「酣睡套裝」結合了多年的研究成果，能夠為乘客帶來更健康和優質的睡眠。
+                        <span class="sentence-hl" onclick="focusQuestion(6)">⑥ 翱翔航空會繼續研發新產品，讓<span class="hl-part" data-hl="6-A">商務乘客<span class="strategy-tag" data-tag="6-A">目標明確</span></span>在長途旅行期間，享受<span class="hl-part" data-hl="6-E">獨特舒適<span class="strategy-tag" data-tag="6-E">巧用修辭</span></span>的<span class="hl-part" data-hl="6-C">服務<span class="strategy-tag" data-tag="6-C">強調好處</span></span>。</span>
+                    </p>
+
+                    <!-- 插入圖片 l1p20.jpg -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <img src="l1p20.jpg" alt="翱翔航空酣睡套裝" style="max-width: 100%; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+
+                <!-- 互動答題卡片區 (網格縮小版) -->
+                <div class="q-card-container">
+                    <!-- Q1 -->
+                    <div id="qcard-1" class="q-card">
+                        <div class="q-card-header">句子 ① 對應策略</div>
+                        <div class="q-card-text">「翱翔航空推出全新設計的「酣睡套裝」，讓商務艙的乘客在空中也能享受到居家般的舒適睡眠。」</div>
+                        <div class="q-options-container">
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'A', true, 1)">A. 目標明確</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'B', false, 1)">B. 展示優勢</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'C', true, 1)">C. 強調好處</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'D', false, 1)">D. 善用權威</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'E', true, 1)">E. 巧用修辭</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'F', false, 1)">F. 組織得法</button>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div id="qcard-2" class="q-card">
+                        <div class="q-card-header">句子 ② 對應策略</div>
+                        <div class="q-card-text">「全新套裝集典雅和舒適於一身，各種配件的設計確保乘客能在機上放鬆入睡，並擁有愉快和舒適的飛行體驗。」</div>
+                        <div class="q-options-container">
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'A', false, 2)">A. 目標明確</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'B', true, 2)">B. 展示優勢</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'C', true, 2)">C. 強調好處</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'D', false, 2)">D. 善用權威</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'E', true, 2)">E. 巧用修辭</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'F', false, 2)">F. 組織得法</button>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div id="qcard-3" class="q-card">
+                        <div class="q-card-header">句子 ③ 對應策略</div>
+                        <div class="q-card-text">「毛毯採用雙面設計，質地柔軟，其透氣設計有助於一年四季維持最理想的溫度。」</div>
+                        <div class="q-options-container">
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'A', false, 3)">A. 目標明確</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'B', true, 3)">B. 展示優勢</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'C', true, 3)">C. 強調好處</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'D', false, 3)">D. 善用權威</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'E', true, 3)">E. 巧用修辭</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'F', false, 3)">F. 組織得法</button>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div id="qcard-4" class="q-card">
+                        <div class="q-card-header">句子 ④ 對應策略</div>
+                        <div class="q-card-text">「睡墊具備矯形功能，密實的內部填充物更能讓乘客感到格外舒適和愜意，有助睡眠。產品經過脊椎醫學協會測試，取得認證。」</div>
+                        <div class="q-options-container">
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'A', false, 4)">A. 目標明確</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'B', true, 4)">B. 展示優勢</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'C', true, 4)">C. 強調好處</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'D', true, 4)">D. 善用權威</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'E', true, 4)">E. 巧用修辭</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'F', false, 4)">F. 組織得法</button>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div id="qcard-5" class="q-card">
+                        <div class="q-card-header">句子 ⑤ 對應策略</div>
+                        <div class="q-card-text">「枕頭的設計大小合適、外形典雅，其質感分外舒適，坐臥均適用。」</div>
+                        <div class="q-options-container">
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'A', false, 5)">A. 目標明確</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'B', true, 5)">B. 展示優勢</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'C', false, 5)">C. 強調好處</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'D', false, 5)">D. 善用權威</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'E', true, 5)">E. 巧用修辭</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'F', false, 5)">F. 組織得法</button>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div id="qcard-6" class="q-card">
+                        <div class="q-card-header">句子 ⑥ 對應策略</div>
+                        <div class="q-card-text">「翱翔航空會繼續研發新產品，讓商務乘客在長途旅行期間，享受獨特舒適的服務。」</div>
+                        <div class="q-options-container">
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'A', true, 6)">A. 目標明確</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'B', false, 6)">B. 展示優勢</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'C', true, 6)">C. 強調好處</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'D', false, 6)">D. 善用權威</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'E', true, 6)">E. 巧用修辭</button>
+                            <button class="mc-chip ex5-chip" onclick="checkMultiStrategy(this, 'F', false, 6)">F. 組織得法</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 35px;">
+                    <button class="reset-btn" onclick="resetPage4Game()" style="background: var(--strong-green); border-color:var(--strong-green); color:white;">
+                        <i class="fa-solid fa-rotate-right"></i> 重新挑戰 (清除本題作答)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 影片播放視窗 -->
+    <div id="video-modal-overlay" class="error-modal-overlay">
+        <div class="video-modal-box">
+            <button class="error-close-btn" onclick="closeVideoModal()" style="top: -15px; right: -15px; background: #ff7675; color: white;">✖</button>
+            <video id="ad-video-player" controls style="width: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <source src="" type="video/mp4">
+                您的瀏覽器不支援影片播放。
+            </video>
+        </div>
+    </div>
+
+    <!-- 全螢幕彈出提示框 -->
+    <div id="feedback-modal" class="error-modal-overlay">
+        <div id="modal-box" class="error-modal-box">
+            <button class="error-close-btn" onclick="closeFeedbackModal()">✖</button>
+            <h3 id="feedback-title" style="margin-top: 0; font-size: 1.4rem;"></h3>
+            <p id="feedback-text" style="font-size: 1.05rem; color: #3d4852; font-weight: bold; line-height: 1.6; margin-bottom: 0;"></p>
+        </div>
+    </div>
+
+    <script>
+        // 分頁與導航
+        function switchPage(pageNum) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const targetPage = document.getElementById('page' + pageNum);
+            if(targetPage) targetPage.classList.add('active');
+            const navButtons = document.querySelectorAll('.top-nav .nav-btn');
+            if(navButtons[pageNum-1]) navButtons[pageNum-1].classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 展開參考答案點
+        function toggleDisplay(id) {
+            const el = document.getElementById(id);
+            if(el) el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // 影片視窗邏輯
+        function openVideoModal(videoSrc) {
+            const modal = document.getElementById('video-modal-overlay');
+            const player = document.getElementById('ad-video-player');
+            player.src = videoSrc;
+            modal.style.display = 'flex';
+            // 自動播放 (若瀏覽器阻擋則靜默)
+            player.play().catch(e => console.log('Auto-play prevented'));
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('video-modal-overlay');
+            const player = document.getElementById('ad-video-player');
+            player.pause();
+            player.src = '';
+            modal.style.display = 'none';
+        }
+
+        // 提示框邏輯
+        function showModal(isSuccess, title, msg) {
+            const modalBox = document.getElementById('modal-box');
+            const modalTitle = document.getElementById('feedback-title');
+            const modalText = document.getElementById('feedback-text');
+
+            if (isSuccess) {
+                modalBox.style.borderTopColor = '#00b894';
+                modalTitle.style.color = '#00b894';
+                modalTitle.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + title;
+            } else {
+                modalBox.style.borderTopColor = '#ff7675';
+                modalTitle.style.color = '#ff7675';
+                modalTitle.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + title;
+            }
+            modalText.innerHTML = msg;
+            document.getElementById('feedback-modal').style.display = 'flex';
+            if (isSuccess) {
+                setTimeout(() => { closeFeedbackModal(); }, 2000);
+            }
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedback-modal').style.display = 'none';
+        }
+
+        // ================= 2.1.1 配對邏輯 =================
+        let scores = { 'p2': 0, 'p3': 0, 'p4': 0 };
+        let selectedChip = null;
+
+        function updateScore(pageId, val) {
+            scores[pageId] += val;
+            document.getElementById('score-' + pageId).innerText = scores[pageId];
+        }
+
+        function selectChip(chip) {
+            const container = document.getElementById('bank-p2');
+            container.querySelectorAll('.mc-chip').forEach(c => c.classList.remove('selected'));
+            chip.classList.add('selected');
+            selectedChip = chip;
+        }
+
+        function fillMultiBlank(slot, expectedTextsArr, pageId) {
+            // 撤回機制
+            if (slot.classList.contains('correct')) {
+                const text = slot.dataset.filled;
+                slot.innerHTML = '<i class="fa-solid fa-hand-pointer"></i> 點擊填入';
+                slot.classList.remove('correct');
+                delete slot.dataset.filled;
+                updateScore(pageId, -2);
+                
+                // 還原選項卡
+                const container = slot.closest('.game-section');
+                const chips = container.querySelectorAll('.mc-chip');
+                for (let c of chips) {
+                    if (c.dataset.text === text) {
+                        c.classList.remove('used');
+                        if (c.dataset.type === 'feature') c.style.display = 'inline-block';
+                        break;
+                    }
+                }
+                return;
+            }
+
+            if (!selectedChip) {
+                showModal(false, '請先選擇選項', '請先點選上方框框內的藍色/綠色文字選項喔！');
+                return;
+            }
+
+            const selectedText = selectedChip.dataset.text;
+            
+            if (expectedTextsArr.includes(selectedText)) {
+                // 檢查是否重複填入 (針對同一個產品區塊)
+                const parentContainer = slot.closest('div[style*="flex: 1"]'); 
+                const siblings = parentContainer.querySelectorAll('.match-blank.correct');
+                let alreadyUsedHere = false;
+                siblings.forEach(sib => {
+                    if(sib.dataset.filled === selectedText) alreadyUsedHere = true;
+                });
+
+                if (alreadyUsedHere) {
+                    showModal(false, '重複作答', '這個目標顧客你已經填過囉！請選另一個。');
+                    return;
+                }
+
+                slot.innerHTML = selectedText;
+                slot.classList.add('correct');
+                slot.dataset.filled = selectedText;
+                
+                // 賣點選對後消失，目標顧客不消失
+                if (selectedChip.dataset.type === 'feature') {
+                    selectedChip.style.display = 'none';
+                    selectedChip.classList.add('used');
+                } else {
+                    selectedChip.classList.remove('selected');
+                }
+                selectedChip = null;
+                
+                updateScore(pageId, 2);
+                showModal(true, '配對正確！', '太棒了，邏輯完全正確。');
+            } else {
+                updateScore(pageId, -1);
+                selectedChip.classList.remove('selected');
+                selectedChip.classList.add('wrong');
+                setTimeout(() => {
+                    document.querySelectorAll('.mc-chip.wrong').forEach(c => c.classList.remove('wrong'));
+                }, 400);
+                selectedChip = null;
+                showModal(false, '想一想...', '這個選項似乎不符合該產品的特性或目標對象喔！');
+            }
+        }
+
+        function resetMultiGame(pageId) {
+            scores[pageId] = 0;
+            document.getElementById('score-' + pageId).innerText = '0';
+            const container = document.getElementById('game-' + pageId);
+            container.querySelectorAll('.match-blank').forEach(slot => {
+                slot.innerHTML = '<i class="fa-solid fa-hand-pointer"></i> 點擊填入';
+                slot.classList.remove('correct');
+                delete slot.dataset.filled;
+            });
+            document.getElementById('bank-p2').querySelectorAll('.mc-chip').forEach(c => {
+                c.classList.remove('selected', 'wrong', 'used');
+                c.style.display = 'inline-block';
+            });
+            selectedChip = null;
+        }
+
+        // ================= 2.1.2 練習四 (動態下拉選單即時批改) =================
+        const p4Data = {
+            'p4-1-adv1': { ans: '無糖無油，容易消化', err: '經典法式麵包的特點是不含糖、雞蛋和牛油，容易消化喔！' },
+            'p4-1-adv2': { ans: '富濃郁小麥香，吃得健康', err: '加入了研磨小麥粉，不僅有麥香，而且非常健康。' },
+            'p4-1-target': { ans: '注重健康的養生族 / 退休長者', err: '這款麵包無糖無油，最適合需要控制飲食或注重養生健康的人士。' },
+            'p4-1-need': { ans: '注重健康，追求無糖易消化食品', err: '這款麵包主打無添加和易消化，對應的是健康取向的需求。' },
+            'p4-2-adv1': { ans: '蜜糖奶油製成，鬆軟香甜', err: '超軟方包的主打特色是加入了天然蜜糖和奶油，味道香甜。' },
+            'p4-2-adv2': { ans: '湯種製法，口感軟嫩', err: '使用了湯種製法，所以口感特別軟嫩喔！' },
+            'p4-2-target': { ans: '喜愛甜食與軟嫩口感的大眾 (如兒童/學生/上班族)', err: '這款麵包加入了蜜糖和奶油，最吸引喜歡香甜、軟嫩口感的大眾。' },
+            'p4-2-need': { ans: '喜愛甜食，追求軟嫩口感', err: '這款麵包非常香甜軟嫩，適合喜歡甜食、追求口感的人。' }
+        };
+
+        function checkP4Select(sel) {
+            const id = sel.id;
+            const errIcon = document.getElementById(id + '-err');
+
+            if (!sel.value) {
+                sel.classList.remove('wrong');
+                errIcon.style.display = 'none';
+                return;
+            }
+
+            if (sel.classList.contains('correct')) return;
+
+            const correctAns = p4Data[id].ans;
+
+            if (sel.value === correctAns) {
+                sel.classList.remove('wrong');
+                sel.classList.add('correct');
+                errIcon.style.display = 'none';
+                
+                const anim = document.createElement('div');
+                anim.className = 'plus-two-anim';
+                anim.innerText = '+2';
+                sel.parentNode.appendChild(anim);
+                setTimeout(() => anim.remove(), 1200);
+                
+                updateScore('p3', 2);
+                showModal(true, '選擇正確！', '太棒了！你的推斷非常精準。');
+            } else {
+                sel.classList.add('wrong');
+                errIcon.style.display = 'block';
+                updateScore('p3', -1);
+                
+                showModal(false, '想一想...', p4Data[id].err);
+            }
+        }
+
+        function showP4Error(id) {
+            showModal(false, '想一想...', p4Data[id].err);
+        }
+
+        function resetP4() {
+            scores['p3'] = 0;
+            document.getElementById('score-p3').innerText = '0';
+            Object.keys(p4Data).forEach(k => {
+                const sel = document.getElementById(k);
+                const errIcon = document.getElementById(k + '-err');
+                sel.value = '';
+                sel.classList.remove('correct', 'wrong');
+                sel.disabled = false;
+                sel.style.pointerEvents = 'auto';
+                errIcon.style.display = 'none';
+            });
+        }
+
+        // ================= 2.2 文章卡片互動邏輯 (螢光筆與彈出標籤) =================
+        function focusQuestion(qNum) {
+            document.querySelectorAll('.sentence-hl').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const targetCard = document.getElementById('qcard-' + qNum);
+            if(targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetCard.classList.remove('highlight-pulse');
+                void targetCard.offsetWidth; 
+                targetCard.classList.add('highlight-pulse');
+            }
+        }
+
+        const strategyColorsRgba = {
+            'A': { solid: '#f1c40f', bg: 'rgba(241, 196, 15, 0.25)' }, 
+            'B': { solid: '#e67e22', bg: 'rgba(230, 126, 34, 0.25)' },
+            'C': { solid: '#2ecc71', bg: 'rgba(46, 204, 113, 0.25)' },
+            'D': { solid: '#1abc9c', bg: 'rgba(26, 188, 156, 0.25)' },
+            'E': { solid: '#9b59b6', bg: 'rgba(155, 89, 182, 0.25)' },
+            'F': { solid: '#3498db', bg: 'rgba(52, 152, 219, 0.25)' }
+        };
+
+        const strategyReasons = {
+            1: { 'B': '這句話主要是在說明為誰帶來什麼好處，尚未展示產品本身的材質或獨特優勢喔！', 'D': '句子中並沒有引用專家、協會或客觀數據來背書喔！', 'F': '這屬於內容描寫，而「組織得法」是指整篇文章的段落編排喔！' },
+            2: { 'A': '這句話專注於描繪產品，並沒有具體點出目標顧客的身份是誰。', 'D': '這句話中並沒有引用客觀數據或權威認證來背書。', 'F': '這屬於內容描寫，而「組織得法」是指整篇文章的段落編排邏輯！' },
+            3: { 'A': '本句專注於產品的材質設計，沒有提及顧客身份或特徵。', 'D': '這句話中沒有任何權威數據、檢測或專家的支持。', 'F': '這是具體的產品敘述，無關文章的組織架構。' },
+            4: { 'A': '沒有點出具體客群身份喔！', 'F': '這屬於產品功能的說明，不是整體的段落組織技巧。' },
+            5: { 'A': '未提及目標顧客是誰。', 'C': '這裡主要描繪產品本身的設計與質感優點，較少著墨於解決顧客的"困難"或帶來特定的功能性目標。', 'D': '本句無權威認證，雖然前一句有，但請針對畫線句子判斷喔！', 'F': '這不是關於文章組織的技巧。' },
+            6: { 'B': '這裡沒有具體描述新產品的優勢細節（如材質或設計）。', 'D': '句中無權威機構或數據。', 'F': '這是結語的願景，屬於內容描繪，不是組織段落的方法。' }
+        };
+
+        function checkMultiStrategy(btn, strategyChar, isCorrect, qNum) {
+            if (btn.classList.contains('correct') || btn.classList.contains('used-wrong')) return; 
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                updateScore('p4', 2);
+                
+                // 按鈕變成對應螢光色並打勾
+                btn.style.backgroundColor = strategyColorsRgba[strategyChar].solid;
+                btn.style.borderColor = strategyColorsRgba[strategyChar].solid;
+                btn.style.color = '#fff';
+                btn.innerHTML += ' <i class="fa-solid fa-check"></i>';
+                
+                // 觸發文章中對應段落的螢光筆效果與行間小標籤
+                const hlParts = document.querySelectorAll(`.hl-part[data-hl="${qNum}-${strategyChar}"]`);
+                hlParts.forEach(part => {
+                    part.style.backgroundColor = strategyColorsRgba[strategyChar].bg; 
+                    part.style.borderBottom = `3px solid ${strategyColorsRgba[strategyChar].solid}`;
+                    part.style.color = '#2d3436';
+                    part.style.fontWeight = '900';
+
+                    // 精準獲取該 part 內綁定對應 strategyChar 的標籤
+                    const tag = part.querySelector(`.strategy-tag[data-tag="${qNum}-${strategyChar}"]`);
+                    if(tag) {
+                        tag.style.color = strategyColorsRgba[strategyChar].solid;
+                        tag.style.borderColor = strategyColorsRgba[strategyChar].solid;
+                        tag.style.backgroundColor = strategyColorsRgba[strategyChar].bg;
+                        tag.classList.add('show');
+                    }
+                });
+            } else {
+                btn.classList.add('used-wrong');
+                updateScore('p4', -1);
+                
+                // 選錯後變灰，不可再選
+                btn.style.opacity = '0.4';
+                btn.style.backgroundColor = '#f1f2f6';
+                btn.style.borderColor = '#dcdde1';
+                btn.style.color = '#a0aec0';
+                btn.style.pointerEvents = 'none';
+
+                let reason = strategyReasons[qNum] && strategyReasons[qNum][strategyChar];
+                if(!reason) reason = '這句話似乎沒有應用到這個宣傳策略喔，請再感受一下句子的重點是什麼。';
+                showModal(false, '想一想...', reason);
+            }
+        }
+
+        function resetPage4Game() {
+            scores['p4'] = 0;
+            document.getElementById('score-p4').innerText = '0';
+            document.querySelectorAll('.sentence-hl').forEach(el => el.classList.remove('active'));
+            
+            // 清除螢光筆與隱藏小標籤
+            document.querySelectorAll('.hl-part').forEach(part => {
+                part.style.backgroundColor = '';
+                part.style.borderBottom = '';
+                part.style.color = '';
+                part.style.fontWeight = '';
+            });
+            document.querySelectorAll('.strategy-tag').forEach(tag => {
+                tag.classList.remove('show');
+            });
+
+            const container = document.getElementById('game-p4');
+            container.querySelectorAll('.mc-chip').forEach(btn => {
+                btn.classList.remove('correct', 'used-wrong');
+                btn.style.opacity = '1';
+                btn.style.backgroundColor = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.style.pointerEvents = 'auto';
+                btn.innerHTML = btn.innerHTML.replace(' <i class="fa-solid fa-check"></i>', '');
+            });
+            container.querySelectorAll('.q-card').forEach(card => {
+                card.classList.remove('highlight-pulse');
+            });
+        }
+
+        // ================= 匯出功能 =================
+        function exportToImage(btnElement) {
+            const container = document.getElementById('exportContent');
+            if(!container) return;
+            const originalHTML = btnElement.innerHTML;
+            btnElement.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+            btnElement.style.pointerEvents = 'none';
+
+            const activePage = document.querySelector('.page.active');
+            if(activePage) {
+                activePage.style.animation = 'none';
+                activePage.style.opacity = '1';
+                activePage.style.transform = 'none';
+            }
+
+            html2canvas(container, {
+                scale: 2, backgroundColor: "#f4f7f6", useCORS: true, allowTaint: false, logging: false
+            }).then(canvas => {
+                try {
+                    const imageURL = canvas.toDataURL("image/png");
+                    const link = document.createElement("a");
+                    link.href = imageURL;
+                    link.download = "建構宣傳內容_學生作答.png";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (e) {
+                    alert("圖片匯出完成，但部分圖片受限無法擷取！\n如需完整截圖，請改用【儲存本頁 (PDF)】功能。");
+                }
+                btnElement.innerHTML = originalHTML;
+                btnElement.style.pointerEvents = 'auto';
+                if(activePage) { activePage.style.animation = ''; activePage.style.opacity = ''; activePage.style.transform = ''; }
+            }).catch(err => {
+                alert("圖片匯出失敗，請稍後再試！");
+                btnElement.innerHTML = originalHTML;
+                btnElement.style.pointerEvents = 'auto';
+            });
+        }
+
+        function exportHTMLToWord() {
+            var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+                "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+                "xmlns='http://www.w3.org/TR/REC-html40'>" +
+                "<head><meta charset='utf-8'><title>建構宣傳內容</title>" +
+                "<style>" +
+                "body { font-family: 'Microsoft JhengHei', sans-serif; color: #3d4852; line-height: 1.6; }" +
+                "h1 { font-size: 24pt; color: #2d3436; margin-bottom: 10px; }" +
+                "</style></head><body>";
+            var footer = "</body></html>";
+            var activePage = document.querySelector('.page.active');
+            if(!activePage) return;
+            var cloneNode = activePage.cloneNode(true);
+            
+            cloneNode.style.display = 'block';
+            cloneNode.style.opacity = '1';
+            cloneNode.style.animation = 'none';
+            
+            // 處理 2.1.2 下拉選單匯出顯示
+            cloneNode.querySelectorAll('.p4-select').forEach(function(sel) {
+                var span = document.createElement('span');
+                if(sel.classList.contains('correct')) {
+                    span.innerHTML = sel.value;
+                    span.style.color = "#00b894";
+                    span.style.fontWeight = "bold";
+                } else {
+                    span.innerText = "_________";
+                }
+                sel.parentNode.replaceChild(span, sel);
+            });
+
+            cloneNode.querySelectorAll('.match-blank').forEach(function(slot) {
+                if(slot.classList.contains('correct')) { slot.style.color = "#00b894"; } else { slot.innerText = "_________"; }
+            });
+
+            // 強制顯示原本隱藏的小標籤以供列印
+            cloneNode.querySelectorAll('.strategy-tag').forEach(el => el.style.display = 'inline-block');
+            cloneNode.querySelectorAll('.reset-btn, .hint-dot, .guide-dot, .error-modal-overlay, .p4-err-icon, .watch-ad-btn').forEach(el => el.remove());
+            
+            var sourceHTML = cloneNode.outerHTML;
+            const colorMap = {
+                '--candy-pink': '#ffb5a7', '--candy-peach': '#fcd5ce', '--candy-yellow': '#fdf0d5',
+                '--candy-mint': '#d8e2dc', '--candy-blue': '#a3c4f3', '--candy-purple': '#c8b6ff',
+                '--strong-blue': '#0984e3', '--strong-orange': '#e17055', '--strong-green': '#00b894',
+                '--strong-pink': '#ff7675', '--strong-purple': '#6c5ce7', '--strong-yellow': '#fdcb6e'
+            };
+            for (const [variable, hex] of Object.entries(colorMap)) {
+                sourceHTML = sourceHTML.replace(new RegExp(`var\\(${variable}\\)`, 'g'), hex);
+            }
+
+            var fullHTML = header + sourceHTML + footer;
+            var fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(fullHTML);
+            fileDownload.download = '建構宣傳內容_學生作答.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        }
+    </script>
+</body>
+</html>
